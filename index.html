@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Metro Police Firearms Management System</title>
+<meta name="description" content="Firearm inventory, officer assignment, maintenance and incident tracking for a metro police armoury."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<div class="shell" id="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo-area">
+      <div class="logo-badge">
+        <div class="logo-shield">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2L3 6v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V6L12 2z"/></svg>
+        </div>
+        <div>
+          <div class="logo-text">METRO PD</div>
+          <div class="logo-sub">Firearms Mgmt</div>
+        </div>
+      </div>
+      <div class="sys-id">SYS-FMS/2024-v3.2</div>
+    </div>
+    <nav aria-label="Main navigation">
+      <div class="nav-section">Main</div>
+      <a class="nav-item active" href="#dashboard" data-page="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <div class="nav-section">Modules</div>
+      <a class="nav-item" href="#inventory" data-page="inventory">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+        Inventory
+        <span class="nav-badge" id="nav-inv-count">0</span>
+      </a>
+      <a class="nav-item" href="#assignment" data-page="assignment">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Assignment
+        <span class="nav-badge badge-blue-solid" id="nav-asgn-count">0</span>
+      </a>
+      <a class="nav-item" href="#maintenance" data-page="maintenance">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        Maintenance
+        <span class="nav-badge badge-amber-solid" id="nav-maint-count">0</span>
+      </a>
+      <a class="nav-item" href="#incidents" data-page="incidents">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Incidents
+        <span class="nav-badge" id="nav-inc-count">0</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <span class="status-dot"></span>System Online
+      <span class="sb-date" id="sb-date"></span>
+      <button class="link-btn" id="reset-demo" type="button">Reset demo data</button>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menu-btn" type="button" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <h1 class="topbar-title" id="page-title">DASHBOARD</h1>
+      <div class="topbar-right">
+        <div class="topbar-clock" id="clock" aria-label="Current time"></div>
+        <button class="btn btn-primary" id="topbar-add-btn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span id="topbar-add-label">Add Record</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="content" id="content">
+
+      <!-- DASHBOARD -->
+      <section class="page active" id="page-dashboard">
+        <div class="stats-row">
+          <a class="stat-card accent" href="#inventory">
+            <div class="stat-label">Total Firearms</div>
+            <div class="stat-value" id="ds-total">0</div>
+            <div class="stat-sub">Registered in system</div>
+          </a>
+          <a class="stat-card green" href="#inventory" data-filter-status="Available">
+            <div class="stat-label">Available</div>
+            <div class="stat-value" id="ds-avail">0</div>
+            <div class="stat-sub">Ready for issue</div>
+          </a>
+          <a class="stat-card blue" href="#assignment" data-filter-asgn="Active">
+            <div class="stat-label">Issued</div>
+            <div class="stat-value" id="ds-issued">0</div>
+            <div class="stat-sub">Currently assigned</div>
+          </a>
+          <a class="stat-card red" href="#incidents">
+            <div class="stat-label">Incidents</div>
+            <div class="stat-value" id="ds-incidents">0</div>
+            <div class="stat-sub"><span id="ds-open-inc">0</span> still open</div>
+          </a>
+        </div>
+        <div class="dash-grid">
+          <div class="widget">
+            <div class="widget-title">Firearm Type Distribution</div>
+            <div id="type-bars"></div>
+          </div>
+          <div class="widget">
+            <div class="widget-title">Status Overview</div>
+            <div id="status-bars"></div>
+          </div>
+          <div class="widget">
+            <div class="widget-title">Maintenance Due</div>
+            <div id="maint-due-list"></div>
+          </div>
+          <div class="widget">
+            <div class="widget-title">Overdue Returns</div>
+            <div id="overdue-list"></div>
+          </div>
+          <div class="widget widget-wide">
+            <div class="widget-title">Recent Activity</div>
+            <div id="activity-log"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- INVENTORY -->
+      <section class="page" id="page-inventory">
+        <div class="section-hdr"><h2>FIREARM INVENTORY</h2><div class="section-hdr-line"></div><span class="result-count" id="inv-count"></span></div>
+        <div class="tbl-wrap">
+          <div class="tbl-toolbar">
+            <input class="search-input" id="inv-search" type="search" placeholder="Search serial, make, model, officer..." aria-label="Search inventory"/>
+            <select class="filter-select" id="inv-filter-type" aria-label="Filter by type">
+              <option value="">All Types</option>
+              <option>Pistol</option><option>Revolver</option><option>Shotgun</option>
+              <option>Rifle</option><option>Submachine Gun</option>
+            </select>
+            <select class="filter-select" id="inv-filter-status" aria-label="Filter by status">
+              <option value="">All Status</option>
+              <option>Available</option><option>Issued</option>
+              <option>Maintenance</option><option>Decommissioned</option>
+            </select>
+            <button class="btn btn-secondary btn-sm toolbar-end" type="button" data-export="inv">Export CSV</button>
+          </div>
+          <div class="tbl-scroll">
+            <table>
+              <thead><tr>
+                <th class="sortable" data-sort="serial">Serial No.</th>
+                <th class="sortable" data-sort="make">Make / Model</th>
+                <th class="sortable" data-sort="type">Type</th>
+                <th class="sortable" data-sort="calibre">Calibre</th>
+                <th class="sortable" data-sort="condition">Condition</th>
+                <th class="sortable" data-sort="status">Status</th>
+                <th class="sortable" data-sort="location">Storage Location</th>
+                <th>Assigned Officer</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="inv-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ASSIGNMENT -->
+      <section class="page" id="page-assignment">
+        <div class="section-hdr"><h2>OFFICER ASSIGNMENT &amp; ISSUING</h2><div class="section-hdr-line"></div><span class="result-count" id="asgn-count"></span></div>
+        <div class="tbl-wrap">
+          <div class="tbl-toolbar">
+            <input class="search-input" id="asgn-search" type="search" placeholder="Search officer, serial, badge..." aria-label="Search assignments"/>
+            <select class="filter-select" id="asgn-filter" aria-label="Filter by status">
+              <option value="">All</option>
+              <option>Active</option><option>Returned</option>
+            </select>
+            <button class="btn btn-secondary btn-sm toolbar-end" type="button" data-export="asgn">Export CSV</button>
+          </div>
+          <div class="tbl-scroll">
+            <table>
+              <thead><tr>
+                <th class="sortable" data-sort="ref">Issue Ref.</th>
+                <th class="sortable" data-sort="officer">Officer Name</th>
+                <th class="sortable" data-sort="badge">Badge No.</th>
+                <th class="sortable" data-sort="serial">Serial No.</th>
+                <th>Firearm</th>
+                <th class="sortable" data-sort="issueDate">Issue Date</th>
+                <th class="sortable" data-sort="returnDate">Return Date</th>
+                <th class="sortable" data-sort="status">Status</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="asgn-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- MAINTENANCE -->
+      <section class="page" id="page-maintenance">
+        <div class="section-hdr"><h2>MAINTENANCE &amp; INSPECTIONS</h2><div class="section-hdr-line"></div><span class="result-count" id="maint-count"></span></div>
+        <div class="tbl-wrap">
+          <div class="tbl-toolbar">
+            <input class="search-input" id="maint-search" type="search" placeholder="Search serial, technician..." aria-label="Search maintenance"/>
+            <select class="filter-select" id="maint-filter" aria-label="Filter by type">
+              <option value="">All Types</option>
+              <option>Routine Inspection</option><option>Repair</option>
+              <option>Cleaning</option><option>Upgrade</option><option>Annual Service</option>
+            </select>
+            <button class="btn btn-secondary btn-sm toolbar-end" type="button" data-export="maint">Export CSV</button>
+          </div>
+          <div class="tbl-scroll">
+            <table>
+              <thead><tr>
+                <th class="sortable" data-sort="ref">Ref.</th>
+                <th class="sortable" data-sort="serial">Serial No.</th>
+                <th>Firearm</th>
+                <th class="sortable" data-sort="type">Type</th>
+                <th class="sortable" data-sort="tech">Technician</th>
+                <th class="sortable" data-sort="scheduled">Scheduled</th>
+                <th class="sortable" data-sort="completed">Completed</th>
+                <th class="sortable" data-sort="status">Status</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="maint-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- INCIDENTS -->
+      <section class="page" id="page-incidents">
+        <div class="section-hdr"><h2>INCIDENT / DISCHARGE REPORTS</h2><div class="section-hdr-line"></div><span class="result-count" id="inc-count"></span></div>
+        <div class="alert alert-warn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          All discharge incidents are classified. Access is restricted to authorised personnel.
+        </div>
+        <div class="tbl-wrap">
+          <div class="tbl-toolbar">
+            <input class="search-input" id="inc-search" type="search" placeholder="Search case no., officer, location..." aria-label="Search incidents"/>
+            <select class="filter-select" id="inc-filter" aria-label="Filter by type">
+              <option value="">All Types</option>
+              <option>Accidental Discharge</option><option>Justified Use of Force</option>
+              <option>Threat Response</option><option>Training Incident</option><option>Theft/Loss</option>
+            </select>
+            <button class="btn btn-secondary btn-sm toolbar-end" type="button" data-export="inc">Export CSV</button>
+          </div>
+          <div class="tbl-scroll">
+            <table>
+              <thead><tr>
+                <th class="sortable" data-sort="caseNo">Case No.</th>
+                <th class="sortable" data-sort="date">Date</th>
+                <th class="sortable" data-sort="officer">Officer</th>
+                <th class="sortable" data-sort="serial">Serial No.</th>
+                <th class="sortable" data-sort="type">Incident Type</th>
+                <th class="sortable" data-sort="location">Location</th>
+                <th class="sortable" data-sort="outcome">Outcome</th>
+                <th class="sortable" data-sort="status">Status</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="inc-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<div class="toast-stack" id="toasts" aria-live="polite"></div>
+
+<!-- MODALS -->
+
+<!-- ADD/EDIT FIREARM -->
+<div class="overlay" id="modal-inv" role="dialog" aria-modal="true" aria-labelledby="inv-modal-title">
+  <form class="modal" id="form-inv" novalidate>
+    <div class="modal-hdr">
+      <h3 id="inv-modal-title">REGISTER FIREARM</h3>
+      <button class="modal-close" type="button" data-close aria-label="Close">&times;</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label" for="inv-serial">Serial Number *</label>
+        <input class="form-control" id="inv-serial" required placeholder="e.g. ZA-2024-001" autocomplete="off"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inv-make">Make *</label>
+        <input class="form-control" id="inv-make" required placeholder="e.g. Glock, Beretta" autocomplete="off"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inv-model">Model *</label>
+        <input class="form-control" id="inv-model" required placeholder="e.g. 17 Gen5" autocomplete="off"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inv-type">Type *</label>
+        <select class="form-control" id="inv-type" required>
+          <option value="">Select type...</option>
+          <option>Pistol</option><option>Revolver</option><option>Shotgun</option>
+          <option>Rifle</option><option>Submachine Gun</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inv-calibre">Calibre</label>
+        <input class="form-control" id="inv-calibre" placeholder="e.g. 9mm, .38 Special" autocomplete="off"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inv-condition">Condition</label>
+        <select class="form-control" id="inv-condition">
+          <option>Excellent</option><option>Good</option><option>Fair</option><option>Poor</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inv-status">Status</label>
+        <select class="form-control" id="inv-status"></select>
+        <div class="form-hint" id="inv-status-hint"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inv-location">Storage Location</label>
+        <input class="form-control" id="inv-location" placeholder="e.g. Armoury A - Rack 3" autocomplete="off"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inv-date">Acquisition Date</label>
+        <input type="date" class="form-control" id="inv-date"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inv-supplier">Supplier</label>
+        <input class="form-control" id="inv-supplier" placeholder="e.g. SAPS Procurement" autocomplete="off"/>
+      </div>
+      <div class="form-group span2">
+        <label class="form-label" for="inv-notes">Notes</label>
+        <textarea class="form-control" id="inv-notes" placeholder="Additional notes..."></textarea>
+      </div>
+    </div>
+    <div class="form-footer">
+      <button class="btn btn-secondary" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="submit">Save Firearm</button>
+    </div>
+  </form>
+</div>
+
+<!-- ADD/EDIT ASSIGNMENT -->
+<div class="overlay" id="modal-asgn" role="dialog" aria-modal="true" aria-labelledby="asgn-modal-title">
+  <form class="modal" id="form-asgn" novalidate>
+    <div class="modal-hdr">
+      <h3 id="asgn-modal-title">ISSUE FIREARM</h3>
+      <button class="modal-close" type="button" data-close aria-label="Close">&times;</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label" for="asgn-officer">Officer Name *</label>
+        <input class="form-control" id="asgn-officer" required placeholder="Full name" autocomplete="off"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="asgn-badge">Badge Number *</label>
+        <input class="form-control" id="asgn-badge" required placeholder="e.g. MP-0042" autocomplete="off"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="asgn-serial">Firearm Serial No. *</label>
+        <select class="form-control" id="asgn-serial" required></select>
+        <div class="form-hint" id="asgn-serial-hint"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="asgn-issue-date">Issue Date *</label>
+        <input type="date" class="form-control" id="asgn-issue-date" required/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="asgn-return-date">Expected Return</label>
+        <input type="date" class="form-control" id="asgn-return-date"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="asgn-auth">Authorised By</label>
+        <input class="form-control" id="asgn-auth" placeholder="Authorising officer" autocomplete="off"/>
+      </div>
+      <div class="form-group span2">
+        <label class="form-label" for="asgn-notes">Purpose / Notes</label>
+        <textarea class="form-control" id="asgn-notes" placeholder="Assignment purpose..."></textarea>
+      </div>
+    </div>
+    <div class="form-footer">
+      <button class="btn btn-secondary" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="submit" id="asgn-submit">Issue Firearm</button>
+    </div>
+  </form>
+</div>
+
+<!-- ADD/EDIT MAINTENANCE -->
+<div class="overlay" id="modal-maint" role="dialog" aria-modal="true" aria-labelledby="maint-modal-title">
+  <form class="modal" id="form-maint" novalidate>
+    <div class="modal-hdr">
+      <h3 id="maint-modal-title">LOG MAINTENANCE</h3>
+      <button class="modal-close" type="button" data-close aria-label="Close">&times;</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label" for="maint-serial">Firearm Serial No. *</label>
+        <select class="form-control" id="maint-serial" required></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="maint-type">Maintenance Type *</label>
+        <select class="form-control" id="maint-type" required>
+          <option value="">Select...</option>
+          <option>Routine Inspection</option><option>Repair</option>
+          <option>Cleaning</option><option>Upgrade</option><option>Annual Service</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="maint-tech">Technician *</label>
+        <input class="form-control" id="maint-tech" required placeholder="Technician name" autocomplete="off"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="maint-scheduled">Scheduled Date</label>
+        <input type="date" class="form-control" id="maint-scheduled"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="maint-completed">Completed Date</label>
+        <input type="date" class="form-control" id="maint-completed"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="maint-status">Status</label>
+        <select class="form-control" id="maint-status">
+          <option>Scheduled</option><option>In Progress</option>
+          <option>Completed</option><option>Cancelled</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="maint-cost">Cost (R)</label>
+        <input type="number" min="0" step="0.01" class="form-control" id="maint-cost" placeholder="0.00"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="maint-next">Next Service Due</label>
+        <input type="date" class="form-control" id="maint-next"/>
+      </div>
+      <div class="form-group span2">
+        <label class="form-label" for="maint-notes">Work Performed / Notes</label>
+        <textarea class="form-control" id="maint-notes" placeholder="Describe work performed..."></textarea>
+      </div>
+    </div>
+    <div class="form-footer">
+      <button class="btn btn-secondary" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="submit">Save Record</button>
+    </div>
+  </form>
+</div>
+
+<!-- ADD/EDIT INCIDENT -->
+<div class="overlay" id="modal-inc" role="dialog" aria-modal="true" aria-labelledby="inc-modal-title">
+  <form class="modal" id="form-inc" novalidate>
+    <div class="modal-hdr">
+      <h3 id="inc-modal-title">LOG INCIDENT REPORT</h3>
+      <button class="modal-close" type="button" data-close aria-label="Close">&times;</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label" for="inc-case">Case Number *</label>
+        <input class="form-control" id="inc-case" required placeholder="e.g. INC-2024-001" autocomplete="off"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inc-date">Incident Date *</label>
+        <input type="date" class="form-control" id="inc-date" required/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inc-officer">Reporting Officer *</label>
+        <input class="form-control" id="inc-officer" required placeholder="Officer name" autocomplete="off"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inc-badge">Badge Number</label>
+        <input class="form-control" id="inc-badge" placeholder="e.g. MP-0042" autocomplete="off"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inc-serial">Firearm Serial No.</label>
+        <select class="form-control" id="inc-serial"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inc-type">Incident Type *</label>
+        <select class="form-control" id="inc-type" required>
+          <option value="">Select...</option>
+          <option>Accidental Discharge</option><option>Justified Use of Force</option>
+          <option>Threat Response</option><option>Training Incident</option><option>Theft/Loss</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inc-location">Location *</label>
+        <input class="form-control" id="inc-location" required placeholder="Incident location" autocomplete="off"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inc-outcome">Outcome</label>
+        <select class="form-control" id="inc-outcome">
+          <option>No Injuries</option><option>Minor Injuries</option>
+          <option>Serious Injuries</option><option>Fatality</option><option>Property Damage</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inc-status">Investigation Status</label>
+        <select class="form-control" id="inc-status">
+          <option>Open</option><option>Under Investigation</option>
+          <option>Closed - No Action</option><option>Closed - Disciplinary</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inc-rounds">Rounds Discharged</label>
+        <input type="number" min="0" step="1" class="form-control" id="inc-rounds" placeholder="0"/>
+      </div>
+      <div class="form-group span2">
+        <label class="form-label" for="inc-desc">Incident Description *</label>
+        <textarea class="form-control" id="inc-desc" required placeholder="Detailed description of the incident..."></textarea>
+      </div>
+    </div>
+    <div class="form-footer">
+      <button class="btn btn-secondary" type="button" data-close>Cancel</button>
+      <button class="btn btn-primary" type="submit">Submit Report</button>
+    </div>
+  </form>
+</div>
+
+<!-- VIEW DETAIL MODAL -->
+<div class="overlay" id="modal-view" role="dialog" aria-modal="true" aria-labelledby="view-title">
+  <div class="modal modal-wide">
+    <div class="modal-hdr">
+      <h3 id="view-title">RECORD DETAIL</h3>
+      <button class="modal-close" type="button" data-close aria-label="Close">&times;</button>
+    </div>
+    <div id="view-content"></div>
+    <div class="form-footer">
+      <button class="btn btn-secondary" type="button" data-close>Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="overlay" id="modal-confirm" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-text">
+  <div class="modal modal-narrow">
+    <div class="modal-hdr">
+      <h3 id="confirm-title">CONFIRM</h3>
+      <button class="modal-close" type="button" data-close aria-label="Close">&times;</button>
+    </div>
+    <p id="confirm-text" class="confirm-text"></p>
+    <div class="form-footer">
+      <button class="btn btn-secondary" type="button" data-close>Cancel</button>
+      <button class="btn btn-danger" type="button" id="confirm-ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
